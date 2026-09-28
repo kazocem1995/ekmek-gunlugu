@@ -1,0 +1,403 @@
+:root {
+  --zemin: #fbf3e7;
+  --kart: #ffffff;
+  --yazi: #3a2e26;
+  --yazi-soluk: #7a685c;
+  --vurgu: #c17a3d;
+  --vurgu-koyu: #9c5f2b;
+  --kenarlik: #e6d7c3;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: var(--zemin);
+  color: var(--yazi);
+}
+
+header {
+  padding: 20px 16px 8px;
+  text-align: center;
+}
+
+header h1 {
+  margin: 0 0 12px;
+  font-size: 1.5rem;
+}
+
+.sekmeler {
+  display: flex;
+  max-width: 480px;
+  margin: 0 auto;
+  background: var(--kart);
+  border: 1px solid var(--kenarlik);
+  border-radius: 10px;
+  padding: 4px;
+  gap: 4px;
+}
+
+.sekme-buton {
+  flex: 1;
+  background: transparent;
+  color: var(--yazi-soluk);
+  padding: 8px;
+  margin: 0;
+  border-radius: 8px;
+  font-size: 0.9rem;
+}
+
+.sekme-buton.aktif {
+  background: var(--vurgu);
+  color: white;
+}
+
+.gorunum.gizli {
+  display: none;
+}
+
+main {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 8px 16px 40px;
+}
+
+h2 {
+  font-size: 1.1rem;
+  color: var(--vurgu-koyu);
+}
+
+.card-form {
+  background: var(--kart);
+  border: 1px solid var(--kenarlik);
+  border-radius: 14px;
+  padding: 16px;
+  margin-bottom: 24px;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--yazi-soluk);
+}
+
+input[type="file"],
+textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid var(--kenarlik);
+  border-radius: 8px;
+  font-size: 1rem;
+  font-family: inherit;
+  background: var(--zemin);
+  color: var(--yazi);
+  resize: vertical;
+}
+
+.foto-onizleme {
+  width: 100%;
+  max-height: 200px;
+  object-fit: cover;
+  border-radius: 10px;
+  margin-top: 4px;
+}
+
+.puanlar {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: var(--zemin);
+  border-radius: 10px;
+  padding: 12px;
+}
+
+.puan-alani label {
+  display: flex;
+  justify-content: space-between;
+}
+
+input[type="range"] {
+  width: 100%;
+  accent-color: var(--vurgu);
+}
+
+button {
+  background: var(--vurgu);
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 6px;
+}
+
+button:active {
+  background: var(--vurgu-koyu);
+}
+
+.ikincil-buton {
+  background: var(--zemin);
+  color: var(--vurgu-koyu);
+  border: 1px dashed var(--vurgu);
+  margin-top: 2px;
+}
+
+.ikincil-buton:active {
+  background: var(--kenarlik);
+}
+
+.ufak-not {
+  font-size: 0.78rem;
+  color: var(--yazi-soluk);
+  margin: 2px 0 4px;
+}
+
+#malzeme-satirlari {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.malzeme-satiri {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.malzeme-satiri .malzeme-un {
+  flex: 1.4;
+  padding: 9px 6px;
+  border: 1px solid var(--kenarlik);
+  border-radius: 8px;
+  background: var(--zemin);
+  color: var(--yazi);
+  font-size: 0.9rem;
+}
+
+.malzeme-satiri .malzeme-diger-ad {
+  flex: 1.2;
+  padding: 9px 6px;
+  border: 1px solid var(--kenarlik);
+  border-radius: 8px;
+  background: var(--zemin);
+  color: var(--yazi);
+  font-size: 0.9rem;
+  min-width: 0;
+}
+
+.malzeme-satiri .malzeme-gram {
+  flex: 0.7;
+  min-width: 0;
+  padding: 9px 6px;
+  border: 1px solid var(--kenarlik);
+  border-radius: 8px;
+  background: var(--zemin);
+  color: var(--yazi);
+  font-size: 0.9rem;
+}
+
+.malzeme-sil-buton {
+  flex: 0 0 auto;
+  background: transparent;
+  color: var(--yazi-soluk);
+  padding: 6px 10px;
+  margin: 0;
+}
+
+.besin-tablosu {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+  margin-top: 6px;
+}
+
+.besin-tablosu td {
+  padding: 4px 0;
+  border-bottom: 1px solid var(--kenarlik);
+}
+
+.besin-tablosu td:last-child {
+  text-align: right;
+  font-weight: 600;
+}
+
+.ozet-kutu {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.ozet-oge {
+  background: var(--kart);
+  border: 1px solid var(--kenarlik);
+  border-radius: 12px;
+  padding: 12px;
+  text-align: center;
+}
+
+.ozet-oge .ozet-sayi {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--vurgu-koyu);
+  display: block;
+}
+
+.ozet-oge .ozet-etiket {
+  font-size: 0.75rem;
+  color: var(--yazi-soluk);
+}
+
+.ozet-oge.genis {
+  grid-column: 1 / -1;
+  text-align: left;
+}
+
+#liste {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.ekmek-karti {
+  display: flex;
+  gap: 12px;
+  background: var(--kart);
+  border: 1px solid var(--kenarlik);
+  border-radius: 12px;
+  padding: 10px;
+  cursor: pointer;
+  position: relative;
+}
+
+.yildiz-buton {
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  background: none;
+  border: none;
+  font-size: 1.3rem;
+  line-height: 1;
+  padding: 2px;
+  cursor: pointer;
+  color: #d9a441;
+}
+
+.yildiz-buton.detay-yildiz {
+  position: static;
+  background: var(--zemin);
+  color: #d9a441;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  font-size: 1rem;
+  padding: 8px 12px;
+  width: auto;
+}
+
+.ekmek-karti img {
+  width: 72px;
+  height: 72px;
+  object-fit: cover;
+  border-radius: 8px;
+  flex-shrink: 0;
+  background: var(--kenarlik);
+}
+
+.ekmek-karti .karti-bilgi {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+  min-width: 0;
+}
+
+.ekmek-karti .tarih {
+  font-size: 0.8rem;
+  color: var(--yazi-soluk);
+}
+
+.ekmek-karti .unlar-ozet {
+  font-size: 0.85rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.puan-rozetleri {
+  display: flex;
+  gap: 8px;
+  font-size: 0.8rem;
+  color: var(--vurgu-koyu);
+}
+
+.bos-mesaj {
+  color: var(--yazi-soluk);
+  font-size: 0.9rem;
+  text-align: center;
+  padding: 20px 0;
+}
+
+.gizli {
+  display: none !important;
+}
+
+.detay-panel {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  display: flex;
+  align-items: flex-end;
+  z-index: 10;
+}
+
+.detay-icerik {
+  background: var(--kart);
+  width: 100%;
+  max-height: 88vh;
+  overflow-y: auto;
+  border-radius: 18px 18px 0 0;
+  padding: 20px 16px 32px;
+  position: relative;
+}
+
+.kapat-buton {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  background: var(--zemin);
+  color: var(--yazi);
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  padding: 0;
+  font-size: 1rem;
+}
+
+#detay-govde img {
+  width: 100%;
+  max-height: 260px;
+  object-fit: cover;
+  border-radius: 12px;
+  margin-bottom: 12px;
+}
+
+#detay-govde .detay-satir {
+  margin-bottom: 10px;
+}
+
+#detay-govde .detay-baslik {
+  font-size: 0.8rem;
+  color: var(--yazi-soluk);
+  font-weight: 600;
+}

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ekmek Günlüğü</title>
+<link rel="stylesheet" href="style.css">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Ekmek Günlüğü">
+<meta name="theme-color" content="#c17a3d">
+</head>
+<body>
+
+<header>
+  <h1>🍞 Ekmek Günlüğü</h1>
+  <nav class="sekmeler">
+    <button class="sekme-buton aktif" data-hedef="gorunum-kayitlar">Kayıtlar</button>
+    <button class="sekme-buton" data-hedef="gorunum-ekle">Yeni Ekle</button>
+  </nav>
+</header>
+
+<main>
+
+  <section id="gorunum-ekle" class="gorunum gizli">
+    <section class="card-form">
+      <h2>Yeni Ekmek Ekle</h2>
+      <form id="ekmek-form">
+
+        <label for="foto">Fotoğraf</label>
+        <input type="file" id="foto" accept="image/*" capture="environment">
+        <img id="foto-onizleme" class="foto-onizleme gizli" alt="Önizleme">
+
+        <label>Kullanılan unlar</label>
+        <div id="malzeme-satirlari"></div>
+        <button type="button" id="malzeme-ekle-buton" class="ikincil-buton">+ Un ekle</button>
+        <p class="ufak-not">Kalori ve besin değerleri girdiğin gramlara göre otomatik hesaplanır (yaklaşık değerlerdir).</p>
+
+        <div class="puanlar">
+          <div class="puan-alani">
+            <label for="tat">Tat <span id="tat-deger">7</span>/10</label>
+            <input type="range" id="tat" min="1" max="10" value="7">
+          </div>
+          <div class="puan-alani">
+            <label for="doku">Doku <span id="doku-deger">7</span>/10</label>
+            <input type="range" id="doku" min="1" max="10" value="7">
+          </div>
+          <div class="puan-alani">
+            <label for="kabariklik">Kabarıklık <span id="kabariklik-deger">7</span>/10</label>
+            <input type="range" id="kabariklik" min="1" max="10" value="7">
+          </div>
+        </div>
+
+        <label for="not">Not</label>
+        <textarea id="not" rows="3" placeholder="Bir dahaki sefere ne değiştirmek istersin?"></textarea>
+
+        <button type="submit">Kaydet</button>
+      </form>
+    </section>
+  </section>
+
+  <section id="gorunum-kayitlar" class="gorunum">
+    <section class="ozet-bolumu">
+      <h2>Özet</h2>
+      <div id="ozet" class="ozet-kutu"></div>
+    </section>
+
+    <section class="liste-bolumu">
+      <h2>Kayıtlar</h2>
+      <div id="liste"></div>
+    </section>
+  </section>
+
+</main>
+
+<div id="detay-panel" class="detay-panel gizli">
+  <div class="detay-icerik">
+    <button id="detay-kapat" class="kapat-buton">✕</button>
+    <div id="detay-govde"></div>
+  </div>
+</div>
+
+<template id="malzeme-satiri-sablonu">
+  <div class="malzeme-satiri">
+    <select class="malzeme-un">
+      <option value="karabugday">Karabuğday unu</option>
+      <option value="sorgun">Sorgun unu</option>
+      <option value="pirinc">Pirinç unu</option>
+      <option value="misir">Mısır unu</option>
+      <option value="schar">Schar glutensiz un</option>
+      <option value="diger">Diğer</option>
+    </select>
+    <input type="text" class="malzeme-diger-ad gizli" placeholder="Un adı">
+    <input type="number" class="malzeme-gram" placeholder="gram" min="0" step="1">
+    <button type="button" class="malzeme-sil-buton" title="Satırı sil">✕</button>
+  </div>
+</template>
+
+<script src="app.js"></script>
+</body>
+</html>
