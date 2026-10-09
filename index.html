@@ -2,7 +2,7 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Ekmek Günlüğü</title>
 <link rel="stylesheet" href="style.css">
 <link rel="manifest" href="manifest.json">
@@ -11,16 +11,13 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Ekmek Günlüğü">
-<meta name="theme-color" content="#c17a3d">
+<meta name="theme-color" content="#b4532a">
 </head>
 <body>
 
 <header>
-  <h1>🍞 Ekmek Günlüğü</h1>
-  <nav class="sekmeler">
-    <button class="sekme-buton aktif" data-hedef="gorunum-kayitlar">Kayıtlar</button>
-    <button class="sekme-buton" data-hedef="gorunum-ekle">Yeni Ekle</button>
-  </nav>
+  <h1>Ekmek Günlüğü</h1>
+  <p class="ust-yazi">Son karar damağın ⚖️</p>
 </header>
 
 <main>
@@ -74,7 +71,7 @@
         </div>
 
         <label for="not">Not</label>
-        <textarea id="not" rows="3" placeholder="Bir dahaki sefere ne değiştirmek istersin?"></textarea>
+        <textarea id="not" rows="3" placeholder="Gerekçeni yaz: bir dahaki sefere ne değişsin?"></textarea>
 
         <button type="submit" id="kaydet-buton">Kaydet</button>
         <button type="button" id="vazgec-buton" class="ikincil-buton gizli">Vazgeç</button>
@@ -83,18 +80,30 @@
   </section>
 
   <section id="gorunum-kayitlar" class="gorunum">
-    <section class="ozet-bolumu">
+    <section id="ozet-bolumu" class="ozet-bolumu">
       <h2>Özet</h2>
       <div id="ozet" class="ozet-kutu"></div>
     </section>
 
     <section class="liste-bolumu">
-      <h2>Kayıtlar</h2>
+      <h2 id="liste-baslik">Kayıtlar</h2>
       <div id="liste"></div>
     </section>
   </section>
 
 </main>
+
+<nav class="alt-menu">
+  <button class="sekme-buton aktif" data-hedef="gorunum-kayitlar">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h11a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3z"/><path d="M9 9h6M9 13h6"/></svg>
+    <span>Kayıtlar</span>
+  </button>
+  <button class="sekme-buton arti-buton" data-hedef="gorunum-ekle" aria-label="Yeni ekmek ekle">+</button>
+  <button class="sekme-buton" data-hedef="gorunum-kayitlar" data-favori="1">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3.5l2.6 5.4 5.9.8-4.3 4.1 1 5.8L12 16.9l-5.2 2.7 1-5.8-4.3-4.1 5.9-.8z"/></svg>
+    <span>Favoriler</span>
+  </button>
+</nav>
 
 <div id="detay-panel" class="detay-panel gizli">
   <div class="detay-icerik">

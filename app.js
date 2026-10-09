@@ -116,6 +116,23 @@ function genelPuan(kayit) {
   return (kayit.tat + kayit.doku + kayit.kabariklik) / 3;
 }
 
+function puanCubuklari(kayit) {
+  const satir = (ad, deger) => `
+    <div class="puan-cubuk">
+      <span class="puan-ad">${ad}</span>
+      <span class="puan-iz"><span class="puan-dolu" style="width:${deger * 10}%"></span></span>
+      <span class="puan-sayi">${deger}</span>
+    </div>`;
+  return `<div class="puan-cubuklari">
+    ${satir("Tat", kayit.tat)}${satir("Doku", kayit.doku)}${satir("Kabarıklık", kayit.kabariklik)}
+  </div>`;
+}
+
+// Hukuk esprisi: her ekmek bir "dosya", numarası yıl/sıra.
+function dosyaNo(kayit) {
+  return `Dosya No: ${new Date(kayit.tarih).getFullYear()}/${kayit.id}`;
+}
+
 function tarihFormatla(isoTarih) {
   const d = new Date(isoTarih);
   return d.toLocaleDateString("tr-TR", { day: "numeric", month: "long", year: "numeric" });
@@ -130,18 +147,26 @@ function malzemeOzeti(kayit) {
 
 // ---- Sekmeler ----
 
-function sekmeyeGec(hedef) {
-  document.querySelectorAll(".sekme-buton").forEach((b) => b.classList.remove("aktif"));
+// Favoriler de kayıtlar görünümünü kullanır, sadece listeyi süzer.
+let sadeceFavoriler = false;
+
+function sekmeyeGec(hedef, favori = false) {
+  sadeceFavoriler = favori;
+  document.querySelectorAll(".sekme-buton").forEach((b) => {
+    const eslesti = b.dataset.hedef === hedef && (b.dataset.favori === "1") === favori;
+    b.classList.toggle("aktif", eslesti);
+  });
   document.querySelectorAll(".gorunum").forEach((g) => g.classList.add("gizli"));
-  document.querySelector(`.sekme-buton[data-hedef="${hedef}"]`).classList.add("aktif");
   document.getElementById(hedef).classList.remove("gizli");
+  window.scrollTo(0, 0);
+  if (hedef === "gorunum-kayitlar") listeyiYenile();
 }
 
 document.querySelectorAll(".sekme-buton").forEach((buton) => {
   buton.addEventListener("click", () => {
     // düzenleme yarıda bırakılıp sekme değiştirilirse form boş haline döner
     if (duzenlenenKayit) formuSifirla();
-    sekmeyeGec(buton.dataset.hedef);
+    sekmeyeGec(buton.dataset.hedef, buton.dataset.favori === "1");
   });
 });
 
@@ -349,7 +374,7 @@ form.addEventListener("submit", async (e) => {
 
   const malzemeler = malzemeSatirlariniOku();
   if (malzemeler.length === 0) {
-    alert("En az bir un ekleyip gram gir.");
+    alert("Delil yetersiz! En az bir un ekleyip gram gir.");
     return;
   }
 
@@ -381,7 +406,6 @@ form.addEventListener("submit", async (e) => {
 
   formuSifirla();
 
-  await listeyiYenile();
   kayitlarSekmesineGec();
 });
 
@@ -393,33 +417,41 @@ formuSifirla();
 const listeElemani = document.getElementById("liste");
 
 async function listeyiYenile() {
-  const kayitlar = await tumKayitlariGetir();
-  kayitlar.sort((a, b) => new Date(b.tarih) - new Date(a.tarih));
+  const tumKayitlar = await tumKayitlariGetir();
+  tumKayitlar.sort((a, b) => new Date(b.tarih) - new Date(a.tarih));
 
-  ozetiGuncelle(kayitlar);
+  ozetiGuncelle(tumKayitlar);
+
+  const kayitlar = sadeceFavoriler ? tumKayitlar.filter((k) => k.favori) : tumKayitlar;
+  document.getElementById("ozet-bolumu").classList.toggle("gizli", sadeceFavoriler);
+  document.getElementById("liste-baslik").textContent = sadeceFavoriler ? "Favoriler" : "Kayıtlar";
 
   if (kayitlar.length === 0) {
-    listeElemani.innerHTML = '<p class="bos-mesaj">Henüz kayıt yok. İlk ekmeğini ekle!</p>';
+    listeElemani.innerHTML = sadeceFavoriler
+      ? '<p class="bos-mesaj">Henüz favori yok. Beğendiğin ekmeğin yıldızına dokun.</p>'
+      : '<p class="bos-mesaj">Henüz kayıt yok. Alttaki + ile ilk ekmeğini ekle!</p>';
     return;
   }
 
   listeElemani.innerHTML = "";
   kayitlar.forEach((kayit) => {
+    const fotolar = kayitFotolari(kayit);
     const kart = document.createElement("div");
     kart.className = "ekmek-karti";
     kart.innerHTML = `
-      <button class="yildiz-buton" title="Favori">${kayit.favori ? "★" : "☆"}</button>
-      <img src="${kayitFotolari(kayit)[0] || ""}" alt="">
+      <div class="kart-foto ${fotolar.length > 0 ? "" : "fotosuz"}">
+        ${fotolar.length > 0 ? `<img src="${fotolar[0]}" alt="">` : `<span class="foto-yok">🍞</span>`}
+        ${fotolar.length > 1 ? `<span class="foto-sayisi">2 fotoğraf</span>` : ""}
+        <button class="yildiz-buton" title="Favori">${kayit.favori ? "★" : "☆"}</button>
+      </div>
       <div class="karti-bilgi">
-        <span class="tarih">${tarihFormatla(kayit.tarih)}</span>
+        <span class="dosya-no">${dosyaNo(kayit)}</span>
+        <div class="kart-ust">
+          <span class="tarih">${tarihFormatla(kayit.tarih)}</span>
+          ${kayit.kalori != null ? `<span class="kalori">${kayit.bilinmeyenVar ? "~" : ""}${kayit.kalori} kcal</span>` : ""}
+        </div>
         <span class="unlar-ozet">${malzemeOzeti(kayit)}</span>
-        <span class="puan-rozetleri">
-          ${puanliMi(kayit) ? `
-          <span>Tat ${kayit.tat}</span>
-          <span>Doku ${kayit.doku}</span>
-          <span>Kabarık ${kayit.kabariklik}</span>` : `<span class="puan-bekliyor">Puan bekliyor</span>`}
-          ${kayit.kalori != null ? `<span>${kayit.bilinmeyenVar ? "~" : ""}${kayit.kalori} kcal</span>` : ""}
-        </span>
+        ${puanliMi(kayit) ? puanCubuklari(kayit) : `<span class="puan-bekliyor">⚖️ Karar bekleniyor</span>`}
       </div>
     `;
     kart.addEventListener("click", () => detayGoster(kayit));
@@ -475,7 +507,7 @@ function ozetiGuncelle(kayitlar) {
       <span class="ozet-etiket">En iyi puan</span>
     </div>
     <div class="ozet-oge genis">
-      <span class="ozet-etiket">En iyi ekmek</span><br>
+      <span class="ozet-etiket">⚖️ Emsal karar (en iyi ekmek)</span><br>
       <span>${enIyi ? `${tarihFormatla(enIyi.tarih)} — ${malzemeOzeti(enIyi)}` : "Henüz puanlanmış ekmek yok"}</span>
     </div>
   `;
@@ -504,7 +536,7 @@ function detayGoster(kayit) {
     <div class="detay-fotolar">${kayitFotolari(kayit).map((f) => `<img src="${f}" alt="">`).join("")}</div>
     <div class="detay-satir">
       <div class="detay-baslik">Tarih</div>
-      <div>${tarihFormatla(kayit.tarih)}</div>
+      <div>${tarihFormatla(kayit.tarih)} · ${dosyaNo(kayit)}</div>
     </div>
     <div class="detay-satir">
       <div class="detay-baslik">Unlar</div>
@@ -513,17 +545,17 @@ function detayGoster(kayit) {
     ${besinSatiri}
     <div class="detay-satir">
       <div class="detay-baslik">Puanlar</div>
-      <div>${puanliMi(kayit)
-        ? `Tat: ${kayit.tat}/10 · Doku: ${kayit.doku}/10 · Kabarıklık: ${kayit.kabariklik}/10`
-        : "Henüz puanlanmadı — Düzenle'ye basıp verebilirsin."}</div>
+      ${puanliMi(kayit)
+        ? puanCubuklari(kayit)
+        : "<div>Henüz puanlanmadı — Düzenle'ye basıp verebilirsin.</div>"}
     </div>
     ${kayit.not ? `
     <div class="detay-satir">
-      <div class="detay-baslik">Not</div>
+      <div class="detay-baslik">Gerekçe (not)</div>
       <div>${kayit.not}</div>
     </div>` : ""}
-    <button id="duzenle-buton" style="margin-top: 10px;">Düzenle (fotoğraf, puan, not ekle)</button>
-    <button id="sil-buton" style="background:#b3452f; margin-top: 10px;">Bu kaydı sil</button>
+    <button id="duzenle-buton" class="genis-buton">Düzenle (fotoğraf, puan, not ekle)</button>
+    <button id="sil-buton" class="tehlike-buton genis-buton">Bu kaydı sil</button>
   `;
   document.getElementById("duzenle-buton").addEventListener("click", () => duzenlemeyiBaslat(kayit));
   document.getElementById("detay-yildiz").addEventListener("click", async () => {
@@ -533,7 +565,7 @@ function detayGoster(kayit) {
     listeyiYenile();
   });
   document.getElementById("sil-buton").addEventListener("click", async () => {
-    if (confirm("Bu kaydı silmek istediğine emin misin?")) {
+    if (confirm("Bu dosya kapatılıp silinsin mi? Temyizi yok!")) {
       await kayitSil(kayit.id);
       detayPanel.classList.add("gizli");
       listeyiYenile();
