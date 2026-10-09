@@ -27,19 +27,38 @@
 
   <section id="gorunum-ekle" class="gorunum gizli">
     <section class="card-form">
-      <h2>Yeni Ekmek Ekle</h2>
+      <h2 id="form-baslik">Yeni Ekmek Ekle</h2>
       <form id="ekmek-form">
 
-        <label for="foto">Fotoğraf</label>
-        <input type="file" id="foto" accept="image/*" capture="environment">
-        <img id="foto-onizleme" class="foto-onizleme gizli" alt="Önizleme">
+        <label>Fotoğraflar (en fazla 2)</label>
+        <p class="ufak-not">Şimdi boş bırakıp ekmek piştikten sonra da ekleyebilirsin.</p>
+        <div class="foto-alanlari">
+          <div class="foto-alani">
+            <span class="foto-etiket">1. fotoğraf</span>
+            <input type="file" class="foto-input" accept="image/*">
+            <img class="foto-onizleme gizli" alt="Önizleme">
+            <button type="button" class="foto-kaldir ikincil-buton gizli">Fotoğrafı kaldır</button>
+          </div>
+          <div class="foto-alani">
+            <span class="foto-etiket">2. fotoğraf</span>
+            <input type="file" class="foto-input" accept="image/*">
+            <img class="foto-onizleme gizli" alt="Önizleme">
+            <button type="button" class="foto-kaldir ikincil-buton gizli">Fotoğrafı kaldır</button>
+          </div>
+        </div>
 
         <label>Kullanılan unlar</label>
         <div id="malzeme-satirlari"></div>
         <button type="button" id="malzeme-ekle-buton" class="ikincil-buton">+ Un ekle</button>
         <p class="ufak-not">Kalori ve besin değerleri girdiğin gramlara göre otomatik hesaplanır (yaklaşık değerlerdir).</p>
 
-        <div class="puanlar">
+        <label class="puan-ver-satiri">
+          <input type="checkbox" id="puan-ver">
+          Ekmek pişti, puan ver
+        </label>
+        <p id="puan-bekliyor-not" class="ufak-not">Puanları ekmek piştikten sonra kaydı düzenleyerek verebilirsin.</p>
+
+        <div id="puanlar" class="puanlar gizli">
           <div class="puan-alani">
             <label for="tat">Tat <span id="tat-deger">7</span>/10</label>
             <input type="range" id="tat" min="1" max="10" value="7">
@@ -57,7 +76,8 @@
         <label for="not">Not</label>
         <textarea id="not" rows="3" placeholder="Bir dahaki sefere ne değiştirmek istersin?"></textarea>
 
-        <button type="submit">Kaydet</button>
+        <button type="submit" id="kaydet-buton">Kaydet</button>
+        <button type="button" id="vazgec-buton" class="ikincil-buton gizli">Vazgeç</button>
       </form>
     </section>
   </section>

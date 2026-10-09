@@ -111,6 +111,61 @@ textarea {
   margin-top: 4px;
 }
 
+.foto-alanlari {
+  display: flex;
+  gap: 10px;
+}
+
+.foto-alani {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.foto-etiket {
+  font-size: 0.78rem;
+  color: var(--yazi-soluk);
+}
+
+.foto-alani .foto-onizleme {
+  height: 120px;
+}
+
+.foto-alani .foto-kaldir {
+  padding: 6px;
+  font-size: 0.8rem;
+}
+
+.puan-ver-satiri {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--yazi);
+}
+
+.puan-ver-satiri input {
+  width: 20px;
+  height: 20px;
+  accent-color: var(--vurgu);
+}
+
+.puan-bekliyor {
+  color: var(--yazi-soluk);
+  font-style: italic;
+}
+
+.detay-fotolar {
+  display: flex;
+  gap: 8px;
+}
+
+.detay-fotolar img {
+  flex: 1;
+  min-width: 0;
+}
+
 .puanlar {
   display: flex;
   flex-direction: column;
