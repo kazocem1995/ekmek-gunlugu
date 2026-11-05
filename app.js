@@ -267,13 +267,14 @@ const vazgecButon = document.getElementById("vazgec-buton");
 const puanVer = document.getElementById("puan-ver");
 const puanlarKutusu = document.getElementById("puanlar");
 const puanBekliyorNot = document.getElementById("puan-bekliyor-not");
-const fotoAlanlari = [...document.querySelectorAll(".foto-alani")];
+const fotoIzgara = document.getElementById("foto-izgara");
+const fotoInput = document.getElementById("foto-input");
 const PUAN_ALANLARI = ["tat", "doku", "kabariklik"];
 
 // Düzenleme sırasında üzerinde çalışılan kayıt; yeni kayıt eklerken null.
 let duzenlenenKayit = null;
-// Formdaki iki fotoğraf yuvası (yoksa null).
-let formFotolari = [null, null];
+// Formdaki fotoğraflar (sınırsız).
+let formFotolari = [];
 
 PUAN_ALANLARI.forEach((id) => {
   const kaydirici = document.getElementById(id);
@@ -291,28 +292,26 @@ function puanAlaniniGuncelle() {
 puanVer.addEventListener("change", puanAlaniniGuncelle);
 
 function fotoOnizlemeleriniGuncelle() {
-  fotoAlanlari.forEach((alan, i) => {
-    const onizleme = alan.querySelector(".foto-onizleme");
-    const varMi = Boolean(formFotolari[i]);
-    if (varMi) onizleme.src = formFotolari[i];
-    onizleme.classList.toggle("gizli", !varMi);
-    alan.querySelector(".foto-kaldir").classList.toggle("gizli", !varMi);
+  fotoIzgara.innerHTML = "";
+  formFotolari.forEach((foto, i) => {
+    const kutu = document.createElement("div");
+    kutu.className = "foto-kutu";
+    kutu.innerHTML = `<img src="${foto}" alt=""><button type="button" class="foto-sil" title="Fotoğrafı kaldır">×</button>`;
+    kutu.querySelector(".foto-sil").addEventListener("click", () => {
+      formFotolari.splice(i, 1);
+      fotoOnizlemeleriniGuncelle();
+    });
+    fotoIzgara.appendChild(kutu);
   });
 }
 
-fotoAlanlari.forEach((alan, i) => {
-  const girdi = alan.querySelector(".foto-input");
-  girdi.addEventListener("change", async () => {
-    const dosya = girdi.files[0];
-    if (!dosya) return;
-    formFotolari[i] = await fotoyuKucult(dosya);
+fotoInput.addEventListener("change", async () => {
+  const dosyalar = [...fotoInput.files];
+  fotoInput.value = "";
+  for (const dosya of dosyalar) {
+    formFotolari.push(await fotoyuKucult(dosya));
     fotoOnizlemeleriniGuncelle();
-  });
-  alan.querySelector(".foto-kaldir").addEventListener("click", () => {
-    formFotolari[i] = null;
-    girdi.value = "";
-    fotoOnizlemeleriniGuncelle();
-  });
+  }
 });
 
 function formuSifirla() {
@@ -323,7 +322,7 @@ function formuSifirla() {
   PUAN_ALANLARI.forEach((id) => {
     document.getElementById(id + "-deger").textContent = "7";
   });
-  formFotolari = [null, null];
+  formFotolari = [];
   fotoOnizlemeleriniGuncelle();
   puanAlaniniGuncelle();
   formBaslik.textContent = "Yeni Ekmek Ekle";
@@ -351,8 +350,7 @@ function duzenlemeyiBaslat(kayit) {
 
   document.getElementById("not").value = kayit.not || "";
 
-  const fotolar = kayitFotolari(kayit);
-  formFotolari = [fotolar[0] || null, fotolar[1] || null];
+  formFotolari = [...kayitFotolari(kayit)];
   fotoOnizlemeleriniGuncelle();
 
   formBaslik.textContent = "Kaydı Düzenle";
@@ -441,7 +439,7 @@ async function listeyiYenile() {
     kart.innerHTML = `
       <div class="kart-foto ${fotolar.length > 0 ? "" : "fotosuz"}">
         ${fotolar.length > 0 ? `<img src="${fotolar[0]}" alt="">` : `<span class="foto-yok">🍞</span>`}
-        ${fotolar.length > 1 ? `<span class="foto-sayisi">2 fotoğraf</span>` : ""}
+        ${fotolar.length > 1 ? `<span class="foto-sayisi">${fotolar.length} fotoğraf</span>` : ""}
         <button class="yildiz-buton" title="Favori">${kayit.favori ? "★" : "☆"}</button>
       </div>
       <div class="karti-bilgi">
