@@ -654,6 +654,77 @@ button:active {
   margin-bottom: 14px;
 }
 
+#detay-govde .detay-fotolar img {
+  cursor: zoom-in;
+}
+
+/* ---- Büyük fotoğraf (tam ekran) ---- */
+
+.buyuk-foto {
+  position: fixed;
+  inset: 0;
+  background: #000;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  touch-action: none;
+}
+
+.buyuk-foto img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  user-select: none;
+  -webkit-user-drag: none;
+  transform-origin: center center;
+  will-change: transform;
+}
+
+.buyuk-foto-kapat {
+  position: absolute;
+  top: calc(12px + env(safe-area-inset-top));
+  right: 12px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  padding: 0;
+  margin: 0;
+  background: rgba(255, 255, 255, 0.18);
+  color: #fff;
+  font-size: 1.2rem;
+}
+
+.buyuk-foto-ok {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 44px;
+  height: 64px;
+  padding: 0;
+  margin: 0;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.buyuk-foto-ok.sol { left: 8px; }
+.buyuk-foto-ok.sag { right: 8px; }
+
+.buyuk-foto-sayac {
+  position: absolute;
+  bottom: calc(16px + env(safe-area-inset-bottom));
+  left: 0;
+  right: 0;
+  text-align: center;
+  color: #fff;
+  font-size: 0.9rem;
+  opacity: 0.85;
+}
+
 #detay-govde .detay-satir {
   margin-bottom: 12px;
 }

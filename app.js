@@ -555,6 +555,10 @@ function detayGoster(kayit) {
     <button id="duzenle-buton" class="genis-buton">Düzenle (fotoğraf, puan, not ekle)</button>
     <button id="sil-buton" class="tehlike-buton genis-buton">Bu kaydı sil</button>
   `;
+  const detayFotolari = kayitFotolari(kayit);
+  detayGovde.querySelectorAll(".detay-fotolar img").forEach((resim, i) => {
+    resim.addEventListener("click", () => buyukFotoAc(detayFotolari, i));
+  });
   document.getElementById("duzenle-buton").addEventListener("click", () => duzenlemeyiBaslat(kayit));
   document.getElementById("detay-yildiz").addEventListener("click", async () => {
     kayit.favori = !kayit.favori;
@@ -575,6 +579,193 @@ function detayGoster(kayit) {
 detayKapat.addEventListener("click", () => detayPanel.classList.add("gizli"));
 detayPanel.addEventListener("click", (e) => {
   if (e.target === detayPanel) detayPanel.classList.add("gizli");
+});
+
+// ---- Büyük fotoğraf (dokununca tam ekran) ----
+// İki parmakla yakınlaştır, yakınken parmakla gezdir, çift dokunuşla 2,5 kat yaklaş.
+// Normal boyuttayken sağa-sola kaydırınca diğer fotoğrafa geçer.
+
+const buyukFoto = document.getElementById("buyuk-foto");
+const buyukResim = document.getElementById("buyuk-foto-resim");
+const buyukSayac = document.getElementById("buyuk-foto-sayac");
+const buyukOnceki = document.getElementById("buyuk-foto-onceki");
+const buyukSonraki = document.getElementById("buyuk-foto-sonraki");
+
+let bfListe = [];
+let bfSira = 0;
+let bfOlcek = 1;
+let bfX = 0;
+let bfY = 0;
+
+function bfUygula() {
+  buyukResim.style.transform = `translate(${bfX}px, ${bfY}px) scale(${bfOlcek})`;
+}
+
+function bfSifirla() {
+  bfOlcek = 1;
+  bfX = 0;
+  bfY = 0;
+  bfUygula();
+}
+
+function bfGoster() {
+  buyukResim.src = bfListe[bfSira];
+  bfSifirla();
+  const cok = bfListe.length > 1;
+  buyukSayac.textContent = cok ? `${bfSira + 1} / ${bfListe.length}` : "";
+  buyukOnceki.classList.toggle("gizli", !cok);
+  buyukSonraki.classList.toggle("gizli", !cok);
+}
+
+function buyukFotoAc(liste, sira) {
+  bfListe = liste;
+  bfSira = sira;
+  bfGoster();
+  buyukFoto.classList.remove("gizli");
+}
+
+function buyukFotoKapat() {
+  buyukFoto.classList.add("gizli");
+}
+
+function bfGec(yon) {
+  if (bfListe.length < 2) return;
+  bfSira = (bfSira + yon + bfListe.length) % bfListe.length;
+  bfGoster();
+}
+
+// Fotoğraf ekranın dışına çok kaçmasın.
+function bfSinirla() {
+  const maxX = (buyukResim.offsetWidth * (bfOlcek - 1)) / 2;
+  const maxY = (buyukResim.offsetHeight * (bfOlcek - 1)) / 2;
+  bfX = Math.max(-maxX, Math.min(maxX, bfX));
+  bfY = Math.max(-maxY, Math.min(maxY, bfY));
+}
+
+document.getElementById("buyuk-foto-kapat").addEventListener("click", buyukFotoKapat);
+buyukOnceki.addEventListener("click", () => bfGec(-1));
+buyukSonraki.addEventListener("click", () => bfGec(1));
+document.addEventListener("keydown", (e) => {
+  if (buyukFoto.classList.contains("gizli")) return;
+  if (e.key === "Escape") buyukFotoKapat();
+  if (e.key === "ArrowLeft") bfGec(-1);
+  if (e.key === "ArrowRight") bfGec(1);
+});
+
+// Bilgisayarda fare tekerleği ile yakınlaştırma.
+buyukFoto.addEventListener("wheel", (e) => {
+  e.preventDefault();
+  bfOlcek = Math.max(1, Math.min(5, bfOlcek * (e.deltaY < 0 ? 1.15 : 1 / 1.15)));
+  if (bfOlcek === 1) { bfX = 0; bfY = 0; }
+  bfSinirla();
+  bfUygula();
+}, { passive: false });
+
+// Dokunma hareketleri
+let bfBaslangic = null;
+let bfSonDokunus = 0;
+let bfHareketEtti = false;
+let bfSonDokunusZamani = 0;
+
+function iki(t) {
+  const dx = t[0].clientX - t[1].clientX;
+  const dy = t[0].clientY - t[1].clientY;
+  return {
+    mesafe: Math.hypot(dx, dy),
+    ortaX: (t[0].clientX + t[1].clientX) / 2,
+    ortaY: (t[0].clientY + t[1].clientY) / 2,
+  };
+}
+
+buyukFoto.addEventListener("touchstart", (e) => {
+  if (e.target.closest("button")) return;
+  bfHareketEtti = false;
+  if (e.touches.length === 2) {
+    const d = iki(e.touches);
+    bfBaslangic = { tur: "sikistir", mesafe: d.mesafe, olcek: bfOlcek, x: bfX, y: bfY, ortaX: d.ortaX, ortaY: d.ortaY };
+  } else if (e.touches.length === 1) {
+    const t = e.touches[0];
+    bfBaslangic = { tur: "kaydir", px: t.clientX, py: t.clientY, x: bfX, y: bfY };
+  }
+}, { passive: true });
+
+buyukFoto.addEventListener("touchmove", (e) => {
+  if (!bfBaslangic) return;
+  e.preventDefault();
+  bfHareketEtti = true;
+  if (e.touches.length === 2) {
+    if (bfBaslangic.tur !== "sikistir") {
+      const d = iki(e.touches);
+      bfBaslangic = { tur: "sikistir", mesafe: d.mesafe, olcek: bfOlcek, x: bfX, y: bfY, ortaX: d.ortaX, ortaY: d.ortaY };
+      return;
+    }
+    const d = iki(e.touches);
+    bfOlcek = Math.max(1, Math.min(5, bfBaslangic.olcek * (d.mesafe / bfBaslangic.mesafe)));
+    bfX = bfBaslangic.x + (d.ortaX - bfBaslangic.ortaX);
+    bfY = bfBaslangic.y + (d.ortaY - bfBaslangic.ortaY);
+    bfSinirla();
+    bfUygula();
+  } else if (e.touches.length === 1 && bfBaslangic.tur === "kaydir") {
+    const t = e.touches[0];
+    const dx = t.clientX - bfBaslangic.px;
+    const dy = t.clientY - bfBaslangic.py;
+    if (bfOlcek > 1) {
+      bfX = bfBaslangic.x + dx;
+      bfY = bfBaslangic.y + dy;
+      bfSinirla();
+    } else {
+      bfX = dx; // normal boyutta: fotoğraf parmakla yana kayar
+    }
+    bfUygula();
+  }
+}, { passive: false });
+
+buyukFoto.addEventListener("touchend", (e) => {
+  if (!bfBaslangic || e.touches.length > 0) {
+    // Bir parmak kalktı, diğeri hâlâ ekranda: kaydırmaya devam et.
+    if (e.touches.length === 1) {
+      const t = e.touches[0];
+      bfBaslangic = { tur: "kaydir", px: t.clientX, py: t.clientY, x: bfX, y: bfY };
+    }
+    return;
+  }
+  const bitti = bfBaslangic;
+  bfBaslangic = null;
+  bfSonDokunusZamani = Date.now();
+
+  if (bfOlcek <= 1.02) {
+    bfOlcek = 1;
+    // Yana kaydırma yeterince uzunsa diğer fotoğrafa geç.
+    if (bitti.tur === "kaydir" && Math.abs(bfX) > 60) {
+      bfGec(bfX < 0 ? 1 : -1);
+      return;
+    }
+    bfSifirla();
+  }
+
+  // Çift dokunuş: yaklaş / uzaklaş
+  if (!bfHareketEtti) {
+    const simdi = Date.now();
+    if (simdi - bfSonDokunus < 300) {
+      if (bfOlcek > 1) bfSifirla();
+      else { bfOlcek = 2.5; bfUygula(); }
+      bfSonDokunus = 0;
+    } else {
+      bfSonDokunus = simdi;
+    }
+  }
+});
+
+// Bilgisayarda çift tıklama ile yaklaş / uzaklaş
+// Fotoğrafın dışındaki siyah alana dokununca kapanır.
+buyukFoto.addEventListener("click", (e) => {
+  if (e.target === buyukFoto && !bfHareketEtti) buyukFotoKapat();
+});
+
+buyukResim.addEventListener("dblclick", () => {
+  if (Date.now() - bfSonDokunusZamani < 800) return; // telefonda dokunma zaten işlendi
+  if (bfOlcek > 1) bfSifirla();
+  else { bfOlcek = 2.5; bfUygula(); }
 });
 
 // ---- Başlangıç ----
